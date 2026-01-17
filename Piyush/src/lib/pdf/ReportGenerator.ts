@@ -84,6 +84,7 @@ export class ReportGenerator {
         this.currentY += 15;
     }
 
+
     private addMessageContent(data: ReportData) {
         this.checkPageBreak(40);
 
@@ -97,14 +98,18 @@ export class ReportGenerator {
         this.doc.setFontSize(10);
         this.doc.setTextColor(0);
 
-        // Message Box
-        this.doc.setFillColor(245, 247, 250);
-        this.doc.rect(this.margin, this.currentY, this.pageWidth - (this.margin * 2), 30, 'F');
-
+        // Split text first to calculate height
         const splitText = this.doc.splitTextToSize(data.message.content, this.pageWidth - (this.margin * 2) - 10);
+        const textHeight = splitText.length * 5; // 5 units per line
+        const boxHeight = Math.max(textHeight + 10, 20); // Minimum 20, add padding
+
+        // Message Box with dynamic height
+        this.doc.setFillColor(245, 247, 250);
+        this.doc.rect(this.margin, this.currentY, this.pageWidth - (this.margin * 2), boxHeight, 'F');
+
         this.doc.text(splitText, this.margin + 5, this.currentY + 7);
 
-        this.currentY += 35;
+        this.currentY += boxHeight + 5;
 
         if (data.message.source) {
             this.doc.setFontSize(9);

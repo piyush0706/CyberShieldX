@@ -6,6 +6,7 @@ import AnimatedText from '@/components/ui/AnimatedText';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import OCRAnalyzer from '@/components/evidence/OCRAnalyzer';
 import TextAnalyzer from '@/components/evidence/TextAnalyzer';
+import PhishingScanner from '@/components/evidence/PhishingScanner';
 import { InvestigationAssistant } from '@/components/investigation/Assistant';
 import { MessageAnalyzer } from '@/lib/analyzer/MessageAnalyzer';
 import { PatternDetector, CrimeMatch, Severity } from '@/lib/crime/PatternDetector';
@@ -16,7 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [evidenceMode, setEvidenceMode] = useState<'ocr' | 'text'>('text');
+  const [evidenceMode, setEvidenceMode] = useState<'ocr' | 'text' | 'phishing'>('text');
 
   // Investigation state
   const [currentAnalysis, setCurrentAnalysis] = useState<AnalysisResult | null>(null);
@@ -196,14 +197,25 @@ export default function Home() {
               >
                 IMAGE OCR
               </button>
+              <button
+                onClick={() => setEvidenceMode('phishing')}
+                className={`px-6 py-3 rounded-md text-sm font-bold transition-all tracking-wide ${evidenceMode === 'phishing'
+                  ? 'bg-[var(--accent)] text-black'
+                  : 'text-[var(--text-secondary)] hover:text-white'
+                  }`}
+              >
+                URL SCANNER
+              </button>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay={400}>
             {evidenceMode === 'text' ? (
               <TextAnalyzer onAnalysisComplete={handleEvidenceProcessed} />
-            ) : (
+            ) : evidenceMode === 'ocr' ? (
               <OCRAnalyzer onAnalysisComplete={handleEvidenceProcessed} />
+            ) : (
+              <PhishingScanner />
             )}
           </ScrollReveal>
         </div>
